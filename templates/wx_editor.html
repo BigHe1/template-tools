@@ -1,0 +1,144 @@
+{% extends "base.html" %}
+{% block title %}报单模板编辑器{% endblock %}
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/wx_editor.css') }}">
+{% endblock %}
+
+{% block content %}
+
+<!-- 保存模板弹窗 -->
+<div class="modal-overlay hidden" id="saveModal">
+    <div class="modal-box">
+        <div class="modal-title">保存模板</div>
+        <input type="text" class="modal-input" id="saveModalInput" placeholder="输入模板名称..." maxlength="30">
+        <div class="modal-actions">
+            <button class="btn btn-secondary btn-sm" id="btnCancelSave">取消</button>
+            <button class="btn btn-primary btn-sm" id="btnConfirmSave">保存</button>
+        </div>
+    </div>
+</div>
+
+<!-- 主布局 -->
+<div class="wx-main-container">
+    <!-- 变量面板 -->
+    <div class="panel fade-in" id="variables-panel">
+        <div class="panel-header">
+            <span class="panel-title">可用变量</span>
+            <span class="panel-badge" id="varCount">0</span>
+        </div>
+        <div class="panel-body">
+            <div class="var-search">
+                <input type="text" class="var-search-input" id="varSearchInput" placeholder="搜索变量名或描述...">
+            </div>
+            <div class="var-scroll-area" id="variablesBody"></div>
+        </div>
+    </div>
+
+    <!-- 编辑器面板 -->
+    <div class="panel fade-in" id="editor-panel">
+        <div class="panel-header">
+            <span class="panel-title">模板编辑</span>
+            <span class="panel-badge" id="msgTypeBadge">Markdown</span>
+        </div>
+        <!-- 富文本工具栏 -->
+        <div class="toolbar" id="toolbar">
+            <div class="toolbar-group" style="position:relative;">
+                <button class="tool-btn" id="btnHeading" title="标题级别" style="width:auto;padding:0 8px;font-size:12px;gap:4px;">
+                    标题 ▾
+                </button>
+                <div class="heading-popover" id="headingPopover" style="display:none;">
+                    <button class="heading-opt" data-level="1">H1 标题一</button>
+                    <button class="heading-opt" data-level="2">H2 标题二</button>
+                    <button class="heading-opt" data-level="3">H3 标题三</button>
+                    <button class="heading-opt" data-level="4">H4 标题四</button>
+                    <button class="heading-opt" data-level="5">H5 标题五</button>
+                    <button class="heading-opt" data-level="6">H6 标题六</button>
+                </div>
+            </div>
+            <span class="toolbar-divider"></span>
+            <div class="toolbar-group">
+                <button class="tool-btn" id="btnBold" title="加粗 (Ctrl+B)">𝐁</button>
+            </div>
+            <span class="toolbar-divider" id="colorDivider"></span>
+            <div class="toolbar-group" id="colorGroup">
+                <span style="font-size:11px;color:var(--text-tertiary);margin-right:4px;">颜色:</span>
+                <span class="color-swatch" data-color="info" style="background:#2eab49;" title="绿色 info"></span>
+                <span class="color-swatch" data-color="comment" style="background:#999999;" title="灰色 comment"></span>
+                <span class="color-swatch" data-color="warning" style="background:#e15541;" title="橙红色 warning"></span>
+            </div>
+            <span class="toolbar-divider"></span>
+            <div class="toolbar-group" id="quoteGroup">
+                <button class="tool-btn" id="btnQuote" title="引用 (>)">❝</button>
+            </div>
+            <span class="toolbar-divider" id="linkDivider"></span>
+            <div class="toolbar-group" id="linkGroup">
+                <button class="tool-btn" id="btnLink" title="插入链接">🔗</button>
+            </div>
+            <span class="toolbar-divider"></span>
+            <div class="toolbar-group">
+                <button class="tool-btn" id="btnClearFormat" title="清除选中文本的 Markdown 格式">✕</button>
+            </div>
+        </div>
+        <!-- 编辑区域 -->
+        <div class="editor-wrapper">
+            <textarea id="templateEditor" placeholder="在此编辑消息模板...
+
+支持企微 Markdown 语法：
+  # 标题  ~  ###### 标题
+  **加粗**
+  > 引用
+  [链接](url)
+  `行内代码`
+  <font color=&quot;warning&quot;>彩色文字</font>
+
+点击上方变量标签即可插入变量到光标位置。
+选中文字后使用工具栏应用样式。"></textarea>
+        </div>
+        <div class="editor-status">
+            <span id="cursorInfo">行 1, 列 1</span>
+            <span class="char-count" id="charCount">0 / 4096 字节</span>
+        </div>
+    </div>
+
+    <!-- 预览面板 -->
+    <div class="panel fade-in" id="preview-panel">
+        <div class="panel-header">
+            <span class="panel-title">消息预览</span>
+            <div class="actions">
+                <button class="btn btn-secondary btn-sm" id="btnExport" title="用示例数据填充变量并导出">📋 填充示例</button>
+                <button class="btn btn-secondary btn-sm" id="btnRefresh" title="手动刷新预览">🔄 刷新</button>
+            </div>
+        </div>
+        <div class="panel-body" id="previewBody">
+            <div class="preview-phone">
+                <div class="preview-content" id="previewContent">
+                    <span style="color: var(--text-tertiary);">在左侧编辑模板内容，预览将在此显示...</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 额外导航栏元素：消息类型切换 + 模板管理 -->
+<template id="wx-nav-extras">
+    <div class="template-manager">
+        <select class="template-select" id="templateSelect" title="已保存的模板">
+            <option value="">我的模板...</option>
+        </select>
+        <button class="btn btn-secondary btn-sm" id="btnSaveTemplate" title="保存当前模板">💾 保存</button>
+        <button class="btn btn-secondary btn-sm" id="btnDeleteTemplate" title="删除选中模板" style="color:var(--danger);">🗑</button>
+    </div>
+    <div class="msg-type-toggle">
+        <button class="msg-type-btn active" data-type="markdown" title="支持标题、加粗、链接、引用、行内代码、颜色">Markdown</button>
+        <button class="msg-type-btn" data-type="markdown_v2" title="支持标题、列表、多级引用、图片、分割线、代码、表格">Markdown V2</button>
+    </div>
+</template>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // 传递变量数据到前端
+    window.WX_VARIABLES = {{ variables | tojson }};
+</script>
+<script src="{{ url_for('static', filename='js/wx_editor.js') }}"></script>
+{% endblock %}

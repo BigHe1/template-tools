@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}模板工具箱{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/common.css') }}">
+    {% block extra_css %}{% endblock %}
+</head>
+<body data-theme="light">
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<!-- 导航栏 -->
+<nav class="navbar">
+    <a href="/" class="navbar-brand">
+        <div class="icon">&#x1F4CB;</div>
+        <span>模板工具箱</span>
+    </a>
+    <div class="navbar-actions">
+        <!-- 工具切换 -->
+        <div class="tool-tabs">
+            <a href="/wx" class="tool-tab">&#x1F4AC; 报单模板</a>
+            <a href="/contract" class="tool-tab">&#x1F4C4; 合同模板</a>
+        </div>
+        <!-- 主题切换 -->
+        <button class="theme-toggle" id="themeToggle" title="切换深浅色主题" aria-label="切换深浅色主题">&#x1F319;</button>
+    </div>
+</nav>
+
+<!-- 内容区域 -->
+{% block content %}{% endblock %}
+
+<script src="{{ url_for('static', filename='js/common.js') }}"></script>
+{% block extra_js %}{% endblock %}
+
+</body>
+</html>

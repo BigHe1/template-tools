@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% block title %}模板工具箱 - 首页{% endblock %}
+
+{% block content %}
+<div style="max-width: 800px; margin: 60px auto; padding: 0 24px;">
+    <div class="panel fade-in" style="padding: 40px; text-align: center;">
+        <div style="font-size: 48px; margin-bottom: 16px;">&#x1F6E0;&#xFE0F;</div>
+        <h1 style="font-size: 24px; font-weight: 700; color: var(--text-primary); margin-bottom: 12px;">
+            模板工具箱
+        </h1>
+        <p style="font-size: 15px; color: var(--text-secondary); max-width: 500px; margin: 0 auto 32px; line-height: 1.7;">
+            集成企业微信报单消息模板编辑与合同文档占位符处理两大工具，
+            统一的界面风格，流畅的操作体验。
+        </p>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; max-width: 560px; margin: 0 auto;">
+            <!-- 报单模板 -->
+            <a href="/wx" style="text-decoration: none; color: inherit;">
+                <div class="panel" style="padding: 28px 20px; cursor: pointer; transition: all var(--transition-smooth);"
+                     onmouseover="this.style.transform='translateY(-4px)'; this.style.boxShadow='var(--shadow-lg)';"
+                     onmouseout="this.style.transform=''; this.style.boxShadow='';">
+                    <div style="font-size: 36px; margin-bottom: 12px;">&#x1F4AC;</div>
+                    <h3 style="font-size: 16px; font-weight: 600; margin-bottom: 8px; color: var(--text-primary);">
+                        报单模板编辑器
+                    </h3>
+                    <p style="font-size: 12px; color: var(--text-tertiary); line-height: 1.6;">
+                        编辑企业微信消息模板<br>
+                        支持 Markdown/V2 语法<br>
+                        变量插入 · 实时预览
+                    </p>
+                </div>
+            </a>
+
+            <!-- 合同模板 -->
+            <a href="/contract" style="text-decoration: none; color: inherit;">
+                <div class="panel" style="padding: 28px 20px; cursor: pointer; transition: all var(--transition-smooth);"
+                     onmouseover="this.style.transform='translateY(-4px)'; this.style.boxShadow='var(--shadow-lg)';"
+                     onmouseout="this.style.transform=''; this.style.boxShadow='';">
+                    <div style="font-size: 36px; margin-bottom: 12px;">&#x1F4C4;</div>
+                    <h3 style="font-size: 16px; font-weight: 600; margin-bottom: 8px; color: var(--text-primary);">
+                        合同模板编辑器
+                    </h3>
+                    <p style="font-size: 12px; color: var(--text-tertiary); line-height: 1.6;">
+                        处理 Word/HTML 占位符<br>
+                        自动生成输入框/复选框<br>
+                        保留文档图片
+                    </p>
+                </div>
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

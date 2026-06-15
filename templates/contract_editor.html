@@ -1,0 +1,117 @@
+{% extends "base.html" %}
+{% block title %}合同模板编辑器{% endblock %}
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/contract_editor.css') }}">
+{% endblock %}
+
+{% block content %}
+
+<div class="contract-main-container">
+    <!-- HTML 输入面板 -->
+    <div class="panel fade-in" id="html-input-panel">
+        <div class="panel-header">
+            <span class="panel-title">HTML 输入</span>
+            <div class="actions" style="display:flex;gap:6px;">
+                <button class="btn btn-secondary btn-sm" id="btnPasteHtml" title="从剪贴板粘贴">📋 粘贴</button>
+                <button class="btn btn-secondary btn-sm" id="btnClearHtml" title="清空输入">✕ 清空</button>
+            </div>
+        </div>
+        <div class="panel-body html-editor-area">
+            <textarea class="form-textarea" id="htmlInput" placeholder="在此粘贴需要处理的 HTML 内容...&#10;&#10;占位符格式：▦数字▦（文本输入框）&#10;带样式占位符：▦&lt;span&gt;数字&lt;/span&gt;▦（自动清理）"></textarea>
+        </div>
+    </div>
+
+    <!-- HTML 输出面板 -->
+    <div class="panel fade-in" id="html-output-panel">
+        <div class="panel-header">
+            <span class="panel-title">处理结果</span>
+            <div class="actions" style="display:flex;gap:6px;">
+                <button class="btn btn-secondary btn-sm" id="btnCopyResult" title="复制结果到剪贴板">📋 复制</button>
+                <button class="btn btn-secondary btn-sm" id="btnDownloadHtml" title="下载为HTML文件">💾 下载</button>
+            </div>
+        </div>
+        <div class="panel-body">
+            <div class="result-area" id="htmlOutput">
+                <span style="color: var(--text-tertiary);">处理结果将在此显示...</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- 控制面板 -->
+    <div class="panel fade-in" id="control-panel">
+        <div class="control-row">
+            <span class="control-label">复选框数字（逗号分隔）：</span>
+            <input type="text" class="control-input" id="checkboxNumbers" placeholder="例：1,3,5,7">
+            <button class="btn btn-primary btn-sm" id="btnProcessHtml">⚡ 处理 HTML</button>
+            <div style="flex:1;"></div>
+            <div class="stats-row" id="htmlStats" style="display:none;">
+                <div class="stat-item">总计：<span class="stat-value" id="statTotal">0</span></div>
+                <div class="stat-item">复选框：<span class="stat-value" id="statCheck">0</span></div>
+                <div class="stat-item">文本框：<span class="stat-value" id="statInput">0</span></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Word 处理面板 -->
+    <div class="panel fade-in" id="word-panel">
+        <div class="panel-header">
+            <span class="panel-title">Word 文档处理</span>
+            <span class="panel-badge" id="wordStatus">就绪</span>
+        </div>
+        <div class="panel-body">
+            <div class="word-layout">
+                <!-- 左：文件上传 -->
+                <div class="word-section">
+                    <span class="word-section-title">1. 选择文件</span>
+                    <div class="upload-zone" id="uploadZone">
+                        <div class="upload-zone-icon">📄</div>
+                        <div class="upload-zone-text">点击选择 Word 文档（.docx）</div>
+                        <div class="upload-zone-filename" id="selectedFileName" style="display:none;"></div>
+                    </div>
+                    <input type="file" id="wordFileInput" accept=".docx">
+                </div>
+
+                <!-- 中：占位符设置 -->
+                <div class="word-section">
+                    <span class="word-section-title">2. 占位符</span>
+                    <div style="display:flex;align-items:center;gap:8px;">
+                        <span style="font-size:12px;color:var(--text-secondary);">文本框：</span>
+                        <input type="text" class="word-ph-input" id="wordPh1" value="▦▦" placeholder="▦▦">
+                    </div>
+                    <div style="display:flex;align-items:center;gap:8px;">
+                        <span style="font-size:12px;color:var(--text-secondary);">复选框：</span>
+                        <input type="text" class="word-ph-input" id="wordPh2" value="??" placeholder="??">
+                    </div>
+                    <button class="btn btn-primary btn-sm" id="btnProcessWord" disabled>⚡ 处理文档</button>
+                </div>
+
+                <!-- 右：结果 -->
+                <div class="word-section">
+                    <span class="word-section-title">3. 处理结果</span>
+                    <div class="word-result-box" id="wordResult">
+                        <span style="color: var(--text-tertiary);">等待处理...</span>
+                    </div>
+                    <div style="display:none;" id="wordActions">
+                        <button class="btn btn-success btn-sm" id="btnDownloadWord">💾 下载处理后的文档</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 日志面板 -->
+    <div class="panel fade-in" id="log-panel">
+        <div class="panel-header">
+            <span class="panel-title">操作日志</span>
+            <button class="btn btn-secondary btn-sm" id="btnClearLog">清空</button>
+        </div>
+        <div class="panel-body">
+            <div class="log-area" id="logArea"></div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/contract_editor.js') }}"></script>
+{% endblock %}
